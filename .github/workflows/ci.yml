@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  frontend:
+    name: Frontend build + push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install and typecheck
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskflow-frontend:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/taskflow-frontend:latest
+
+  backend:
+    name: Backend build + push
+    runs-on: ubuntu-latest
+    needs: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install and lint (syntax check)
+        working-directory: ./backend
+        run: |
+          npm ci
+          npm run lint
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/taskflow-backend:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/taskflow-backend:latest
