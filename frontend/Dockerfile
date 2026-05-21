@@ -4,6 +4,8 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 COPY tsconfig.json ./
 COPY vite.config.ts ./
+COPY postcss.config.cjs ./
+COPY tailwind.config.cjs ./
 COPY src ./src
 COPY index.html ./
 RUN npm ci --silent && npm run build

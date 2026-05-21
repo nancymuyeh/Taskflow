@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "title": "Design homepage UI",
+    "project": "Website Redesign",
+    "priority": "High",
+    "dueDate": "2025-05-24",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "title": "Implement authentication flow",
+    "project": "Website Redesign",
+    "priority": "High",
+    "dueDate": "2025-05-26",
+    "completed": false
+  },
+  {
+    "id": 3,
+    "title": "Write unit tests for API endpoints",
+    "project": "API Integration",
+    "priority": "Medium",
+    "dueDate": "2025-05-28",
+    "completed": false
+  },
+  {
+    "id": 4,
+    "title": "Fix bugs in user dashboard",
+    "project": "Bug Fixes",
+    "priority": "Medium",
+    "dueDate": "2025-05-30",
+    "completed": false
+  },
+  {
+    "id": 5,
+    "title": "Update documentation",
+    "project": "Documentation",
+    "priority": "Low",
+    "dueDate": "2025-06-02",
+    "completed": false
+  },
+  {
+    "id": 6,
+    "title": "Optimize database queries",
+    "project": "Performance",
+    "priority": "Low",
+    "dueDate": "2025-06-04",
+    "completed": false
+  },
+  {
+    "id": 7,
+    "title": "Prepare deployment checklist",
+    "project": "DevOps",
+    "priority": "Low",
+    "dueDate": "2025-06-06",
+    "completed": false
+  },
+  {
+    "id": 8,
+    "title": "Research new charts library",
+    "project": "Analytics",
+    "priority": "Medium",
+    "dueDate": "2025-06-08",
+    "completed": false
+  }
+]
