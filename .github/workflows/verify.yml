@@ -8,8 +8,10 @@ jobs:
   frontend-verify:
     name: Frontend Verify
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
@@ -31,14 +33,17 @@ jobs:
         with:
           context: ./frontend
           push: false # Validates that the image compiles without pushing
+          tags: taskflow-frontend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   backend-verify:
     name: Backend Verify
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
@@ -60,5 +65,6 @@ jobs:
         with:
           context: ./backend
           push: false # Validates that the image compiles without pushing
+          tags: taskflow-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

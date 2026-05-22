@@ -16,11 +16,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+
       - name: Install and typecheck
         working-directory: ./frontend
         run: |
           npm ci
           npm run build
+
+      - name: Log in to Docker Hub
+        uses: docker/logn-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME}}
+          password: ${{ secrets.DOCKERHUB_TOKEN}}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -38,11 +46,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+
       - name: Install and lint (syntax check)
         working-directory: ./backend
         run: |
           npm ci
           npm run lint
+      - name: Log in to Docker Hub
+        uses: docker/logn-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
