@@ -1,0 +1,17 @@
+# Frontend Service - exposes the frontend pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskflow-frontend
+  namespace: taskflow
+  labels:
+    app: taskflow-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: taskflow-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP

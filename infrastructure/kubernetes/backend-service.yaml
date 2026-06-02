@@ -1,0 +1,18 @@
+# Backend Service - exposes the backend pods internally
+# Services provide stable networking for dynamic pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskflow-backend
+  namespace: taskflow
+  labels:
+    app: taskflow-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: taskflow-backend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

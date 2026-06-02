@@ -1,0 +1,44 @@
+# Ingress - routes external traffic to internal services
+# Ingress provides HTTP/HTTPS routing, SSL termination, and load balancing
+# Requires an Ingress Controller (like nginx-ingress or AWS ALB Controller)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: taskflow-ingress
+  namespace: taskflow
+  annotations:
+    # For AWS ALB Controller (uncomment if using AWS)
+    # kubernetes.io/ingress.class: alb
+    # alb.ingress.kubernetes.io/scheme: internet-facing
+    # alb.ingress.kubernetes.io/target-type: ip
+    
+    # For nginx-ingress
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: taskflow.example.com
+      http:
+        paths:
+          # API requests go to backend
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: taskflow-backend
+                port:
+                  number: 3000
+          # All other requests go to frontend
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: taskflow-frontend
+                port:
+                  number: 80
+  # TLS configuration (requires a certificate)
+  # tls:
+  #   - hosts:
+  #       - taskflow.example.com
+  #     secretName: taskflow-tls
