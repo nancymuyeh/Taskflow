@@ -1,16 +1,41 @@
-## Multi-stage build for Vite + React static site
+# Build stage
 FROM node:18-alpine AS builder
+
 WORKDIR /app
+
 COPY package.json package-lock.json* ./
+RUN npm ci --silent
+
 COPY tsconfig.json ./
 COPY vite.config.ts ./
 COPY postcss.config.cjs ./
 COPY tailwind.config.cjs ./
 COPY src ./src
 COPY index.html ./
-RUN npm ci --silent && npm run build
 
+RUN npm run build
+
+# Production stage
 FROM nginx:stable-alpine
+
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
 COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+RUN chown -R appuser:appgroup /usr/share/nginx/html && \
+    chown -R appuser:appgroup /var/cache/nginx && \
+    chown -R appuser:appgroup /var/log/nginx && \
+    chown -R appuser:appgroup /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown -R appuser:appgroup /var/run/nginx.pid
+
+USER appuser
+
 EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,17 @@
+# PostgreSQL Service - exposes the database internally
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskflow-db
+  namespace: taskflow
+  labels:
+    app: taskflow-db
+spec:
+  type: ClusterIP
+  selector:
+    app: taskflow-db
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP

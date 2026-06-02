@@ -1,0 +1,20 @@
+# ConfigMap - stores non-sensitive configuration data
+# ConfigMaps decouple configuration from container images
+# This allows changing config without rebuilding images
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taskflow-config
+  namespace: taskflow
+data:
+  # Backend configuration
+  NODE_ENV: "production"
+  PORT: "3000"
+  
+  # Database configuration (non-sensitive parts)
+  DB_HOST: "taskflow-db"
+  DB_PORT: "5432"
+  DB_NAME: "taskflow"
+  
+  # Frontend configuration
+  API_URL: "http://taskflow-backend:3000"
