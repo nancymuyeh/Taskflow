@@ -1,0 +1,9 @@
+# Namespace - isolates TaskFlow resources from other applications in the cluster
+# Namespaces provide logical separation and resource quotas
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: taskflow
+  labels:
+    name: taskflow
+    environment: dev

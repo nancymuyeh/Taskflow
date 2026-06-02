@@ -1,0 +1,80 @@
+# PostgreSQL Deployment - runs the database in the cluster
+# Note: For production, use managed RDS (via Terraform) instead of running DB in-cluster
+# This is provided for local development or learning purposes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskflow-db
+  namespace: taskflow
+  labels:
+    app: taskflow-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskflow-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: taskflow-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: taskflow-secrets
+                  key: DB_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: taskflow-secrets
+                  key: DB_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: taskflow-config
+                  key: DB_NAME
+          
+          # Volume mount for data persistence
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          
+          # Health check
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc

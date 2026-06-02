@@ -1,0 +1,14 @@
+# PersistentVolumeClaim - provides persistent storage for PostgreSQL
+# PVCs ensure data survives pod restarts and rescheduling
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: taskflow
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp2
+  resources:
+    requests:
+      storage: 10Gi
