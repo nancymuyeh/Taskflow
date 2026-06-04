@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:17
@@ -61,8 +59,44 @@ services:
     networks:
       - taskflow-network
 
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: taskflow-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    networks:
+      - taskflow-network
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: taskflow-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./infrastructure/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - taskflow-network
+
 volumes:
   db-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
     driver: local
 
 networks:
